@@ -9,7 +9,7 @@ const createAccessTokenValidator = (
     .isEmail()
     .withMessage('VALIDATION_ERRORS.INVALID_EMAIL')
     .custom(async (email) => {
-      const account = await appContext.accountRepository.findOne({
+      const account = await appContext.todoRepository.findOne({
         email,
       });
       if (lodash.isEmpty(account)) {
