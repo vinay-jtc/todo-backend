@@ -25,19 +25,18 @@ export class TodoController extends BaseController {
     this.router.post(
       `${this.basePath}`,
       createTodoValidator(),
-      this.createAccount,
+      this.createTodo,
     );
   }
 
-  private createAccount = async (
+  private createTodo = async (
     req: ExtendedRequest,
     res: Response,
     next: NextFunction,
   ) => {
     // TODO jjalan: Find a way to do this not in each action
-    const failures: ValidationFailure[] = Validation.extractValidationErrors(
-      req,
-    );
+    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
+    
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
         res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
