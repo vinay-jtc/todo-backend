@@ -1,5 +1,3 @@
-import lodash from 'lodash';
-
 import { BaseController } from './base-controller';
 import { NextFunction, Response, Router } from 'express';
 import { Validation } from '@helpers';

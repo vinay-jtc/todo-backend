@@ -6,7 +6,8 @@ In order to run the project locally, you need few keys in order for 3rd party se
 
 1. Install dependencies: `npm i`
 2. Reach out to your team member for `local.json` (which has sensitive keys) and drop it into `config` folder
-3. Start the server: `npm run serve`
+3. Start the server: `gulp serve`
+4. Check route: http://localhost:5000/todos at postman
 
 ### Contributing
 #### Development Workflow
