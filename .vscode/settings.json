@@ -1,0 +1,8 @@
+{
+    "tslint.configFile": "./tslint.json",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "linter_codeclimate.enabled": true
+  }
+  
