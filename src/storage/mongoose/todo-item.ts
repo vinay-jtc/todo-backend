@@ -15,5 +15,5 @@ const todoItemSchema: Schema = new Schema(
     },
   }
 );
-const todoItem = model("Todo", todoItemSchema);
+const todoItem = model("TodoItem", todoItemSchema);
 export default todoItem;

@@ -1,4 +1,4 @@
-import { TodoItemController } from './todo-controller';
+import { TodoItemController } from './todo-item-controller';
 import { BaseController } from './base-controller';
 import { HealthCheckController } from './healthcheck-controller';
 

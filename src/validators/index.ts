@@ -1,3 +1,3 @@
-import createTodoItemValidator from './create-todo-validator';
+import createTodoItemValidator from './create-todo-item-validator';
 
 export { createTodoItemValidator };

@@ -10,7 +10,7 @@ import {
 import { TodoItem, BaseModel, ModelFactory } from '@models';
 import { IDataStore, QueryOptions, DeleteResult } from '@storage';
 import { LooseObject } from '@typings';
-import todoItem from './todo'
+import todoItem from './todo-item'
 
 export class MongoStore implements IDataStore {
   public connect(): Promise<Mongoose> {
