@@ -27,7 +27,26 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem,
     );
+    this.router.delete(
+      `${this.basePath}/:id`,
+      this.deleteTodoItem,
+    );
   }
+
+  private deleteTodoItem = async (
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const {id} = req.params;
+    const todoItem = await this.appContext.TodoItemRepository.deleteMany({_id:id})
+    if(todoItem){
+      res.status(204).send();
+    }else{
+      res.status(404).send();
+    }
+  }
+  
 
   private createTodoItem = async (
     req: ExtendedRequest,
