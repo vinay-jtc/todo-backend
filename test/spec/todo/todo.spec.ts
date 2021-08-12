@@ -57,4 +57,28 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
+
+
+  describe("GET /todos/:id", () => {
+    it("should fetch a todo item if it exists and if id is valid mongo id", async () => {
+      const todoItem = await testAppContext.todoItemRepository.save(
+        new TodoItem({ title: "Fetching an item" })
+      );
+  
+      const res = await chai.request(expressApp).get(`/todos/${todoItem._id}`);
+      expect(res).to.have.status(200);
+      expect(res.body).to.have.property("id");
+      expect(res.body).to.have.property("title");
+    });
+
+    it("Should return a validation error if id is invalid mongo id", async () => {
+      const res = await chai.request(expressApp).get("/todos/adhjgjfn");
+  
+      expect(res).to.have.status(400);
+      expect(res.body)
+        .to.have.nested.property("failures[0].message")
+        .to.equal(
+          "Mongo ID is invalid"
+        );
+    });
 });

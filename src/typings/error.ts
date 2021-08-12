@@ -17,15 +17,6 @@ export class ValidationError extends AppError {
   }
 }
 
-export class NotFoundError extends AppError {
-  status: string = 'DEFAULT_ERRORS.RESOURCE_NOT_FOUND';
-  statusCode: number = 400;
-
-  constructor(msg: string) {
-    super(msg);
-  }
-}
-
 // tslint:disable-next-line: max-classes-per-file
 export class AuthenticationError extends AppError {
   status: string = 'DEFAULT_ERRORS.AUTHENTICATION_FAILED';
