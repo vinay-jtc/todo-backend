@@ -31,7 +31,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^3.0.0",
+    "@types/bcrypt": "^3.0.1",
     "@types/body-parser": "^1.17.1",
     "@types/chai": "^4.2.11",
     "@types/chai-http": "^4.2.0",
