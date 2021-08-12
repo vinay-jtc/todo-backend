@@ -1,7 +1,7 @@
 import { BaseController } from './base-controller';
 import { NextFunction, Response, Router } from 'express';
 import { Validation } from '@helpers';
-import { TodoItem } from '@models';
+import { TodoItem , TodoItems} from '@models';
 import {
   AppContext,
   Errors,
@@ -27,6 +27,20 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem,
     );
+
+    this.router.get(
+      `${this.basePath}`,
+      this.getTodoItemList
+    );
+  }
+
+  private getTodoItemList = async (
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const todoItems = new TodoItems(await this.appContext.TodoItemRepository.getAll());
+    res.status(200).json(todoItems.serialize());
   }
 
   private createTodoItem = async (
@@ -53,4 +67,4 @@ export class TodoItemController extends BaseController {
     );
     res.status(201).json(todoItem.serialize());
   }
-  }
+}
