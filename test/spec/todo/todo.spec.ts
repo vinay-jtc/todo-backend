@@ -70,7 +70,7 @@ describe("POST /todos", () => {
       expect(res.body).to.have.property("title");
     });
   
-    it("should give response 404 if ", async () => {
+    it("should give response 404 if item isn't found", async () => {
       let todoItem = await testAppContext.todoItemRepository.save(
         new TodoItem({ title: "Todo item fatch" })
       );
