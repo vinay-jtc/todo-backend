@@ -57,4 +57,16 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
+
+  describe("DELETE /todos/:id", () => {
+    it("should return 204 if todo exists else 404", async () => {
+      let todo = await testAppContext.todoRepository.save(
+        new TodoItem({ title: "TODO_TO_BE_DELETED" })
+      );
+      const res1 = await chai.request(expressApp).delete(`/todos/${todo._id}`);
+      expect(res1).to.have.status(204);
+  
+      const res2 = await chai.request(expressApp).delete(`/todos/${todo._id}`);
+      expect(res2).to.have.status(404);
+    });
 });
