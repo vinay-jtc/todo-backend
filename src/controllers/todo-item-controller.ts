@@ -27,6 +27,36 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem,
     );
+    this.router.put(
+      `${this.basePath}/:id`,
+      createTodoItemValidator(),
+      this.updateTodoItem,
+    );
+  }
+
+  private updateTodoItem = async (
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
+    
+    if (failures.length > 0) {
+      const valError = new Errors.ValidationError(
+        res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
+        failures,
+      );
+      return next(valError);
+    }
+
+    const {id} = req.params;
+    const {title} = req.body;
+    const todoItem = await this.appContext.TodoItemRepository.update({_id:id}, {title});
+    if(todoItem){
+      res.status(200).json(todoItem.serialize());
+    }else{
+      res.status(404).send();
+    }
   }
 
   private createTodoItem = async (
