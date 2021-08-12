@@ -9,10 +9,10 @@ import {
   ValidationFailure,
 } from '@typings';
 import {
-  createTodoValidator
+  createTodoItemValidator
 } from '@validators';
 
-export class TodoController extends BaseController {
+export class TodoItemController extends BaseController {
   public basePath: string = '/todos';
   public router: Router = Router();
 
@@ -24,12 +24,12 @@ export class TodoController extends BaseController {
   private initializeRoutes() {
     this.router.post(
       `${this.basePath}`,
-      createTodoValidator(),
-      this.createTodo,
+      createTodoItemValidator(),
+      this.createTodoItem,
     );
   }
 
-  private createTodo = async (
+  private createTodoItem = async (
     req: ExtendedRequest,
     res: Response,
     next: NextFunction,
@@ -46,11 +46,11 @@ export class TodoController extends BaseController {
     }
 
     const { title } = req.body;
-    const todo = await this.appContext.todoRepository.save(
+    const todoItem = await this.appContext.TodoItemRepository.save(
       new TodoItem({
         title
       }),
     );
-    res.status(201).json(todo.serialize());
+    res.status(201).json(todoItem.serialize());
   }
   }

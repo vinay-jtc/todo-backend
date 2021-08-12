@@ -7,7 +7,7 @@ import i18n from 'i18n';
 import path from 'path';
 
 import {
-  TodoController,
+  TodoItemController,
   BaseController,
   HealthCheckController,
 } from '@controllers';
@@ -87,7 +87,7 @@ export class App {
 
   public initializeControllers() {
     const controllers: BaseController[] = [
-      new TodoController(this.ctx),
+      new TodoItemController(this.ctx),
       new HealthCheckController(this.ctx),
     ];
 

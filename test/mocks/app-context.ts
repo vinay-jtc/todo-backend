@@ -14,5 +14,5 @@ export const respositoryContext = {
 
 export const testAppContext: AppContext = {
   logger: mockLogger,
-  todoRepository: new Repositories.TodoRepository(respositoryContext),
+  TodoItemRepository: new Repositories.TodoItemRepository(respositoryContext),
 };

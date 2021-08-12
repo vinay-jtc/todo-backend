@@ -2,7 +2,7 @@ import { BaseRepository } from './base-repository';
 import { TodoItem, ModelFactory } from '@models';
 import { RepositoryContext } from './repository-context';
 
-export class TodoRepository extends BaseRepository<TodoItem> {
+export class TodoItemRepository extends BaseRepository<TodoItem> {
   constructor(context: RepositoryContext) {
     super(context);
   }

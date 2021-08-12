@@ -1,6 +1,6 @@
 import { connect, Mongoose as M } from 'mongoose';
 import { Mongoose } from '@storage';
-import config from 'config';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 export class InMemoryMongoStore extends Mongoose.MongoStore {
   constructor() {
@@ -8,7 +8,8 @@ export class InMemoryMongoStore extends Mongoose.MongoStore {
   }
 
   public async connect(): Promise<M> {
-    const uri: string = config.get('mongoDb.uri');
+    const mongod = new MongoMemoryServer();
+    const uri = await mongod.getUri();
     const options = {
       useNewUrlParser: true,
       useCreateIndex: true,

@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const todoSchema: Schema = new Schema(
+const todoItemSchema: Schema = new Schema(
   {
     title: {
       type: String,
@@ -15,5 +15,5 @@ const todoSchema: Schema = new Schema(
     },
   }
 );
-const todo = model("Todo", todoSchema);
-export default todo;
+const todoItem = model("Todo", todoItemSchema);
+export default todoItem;

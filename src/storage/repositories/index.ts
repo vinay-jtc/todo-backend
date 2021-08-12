@@ -1,3 +1,3 @@
-import { TodoRepository } from './todo-repository';
+import { TodoItemRepository } from './todo-repository';
 
-export { TodoRepository };
+export { TodoItemRepository };

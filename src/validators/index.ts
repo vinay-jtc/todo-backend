@@ -1,4 +1,3 @@
-import createAccessTokenValidator from './create-access-token-validator';
-import createTodoValidator from './create-todo-validator';
+import createTodoItemValidator from './create-todo-validator';
 
-export { createAccessTokenValidator, createTodoValidator };
+export { createTodoItemValidator };

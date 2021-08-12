@@ -1,4 +1,4 @@
-import todo from './todo';
+import todoItem from './todo';
 import { MongoStore } from './mongo-store';
 
-export { todo, MongoStore };
+export { todoItem, MongoStore };

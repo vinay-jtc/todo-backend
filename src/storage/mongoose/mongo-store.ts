@@ -10,7 +10,7 @@ import {
 import { TodoItem, BaseModel, ModelFactory } from '@models';
 import { IDataStore, QueryOptions, DeleteResult } from '@storage';
 import { LooseObject } from '@typings';
-import todo from './todo'
+import todoItem from './todo'
 
 export class MongoStore implements IDataStore {
   public connect(): Promise<Mongoose> {
@@ -197,7 +197,7 @@ export class MongoStore implements IDataStore {
     modelFactory: ModelFactory<T>,
   ): MongoosModel<Document> {
     if (modelFactory.getType() === typeof TodoItem) {
-      return todo;
+      return todoItem;
     }
     return null;
   }

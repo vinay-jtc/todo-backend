@@ -43,4 +43,18 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
+  
+  it("should return a validation error if title is not a string", async () => {
+    const res = await chai
+      .request(expressApp)
+      .post("/todos")
+      .send({
+        title: { key: "value" },
+      });
+
+    expect(res).to.have.status(400);
+    expect(res.body)
+      .to.have.nested.property("failures[0].message")
+      .to.equal("Please specify the valid title");
+  });
 });
