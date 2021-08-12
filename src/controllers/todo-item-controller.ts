@@ -27,7 +27,21 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem,
     );
+
+    this.router.get(
+      `${this.basePath}/:id`,
+      this.getTodoItem,
+    );
   }
+
+  private getTodoItem = async(
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction,)=>{
+      const {id} = req.params;
+      const todoItem = await this.appContext.TodoItemRepository.findOne({_id:id});
+      res.status(200).json(todoItem.serialize());
+    }
 
   private createTodoItem = async (
     req: ExtendedRequest,
