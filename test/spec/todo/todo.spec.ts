@@ -53,7 +53,6 @@ describe("GET /todos/:id", () => {
     );
 
     const res = await chai.request(expressApp).get(`/todos/${todoItem._id}`);
-
     expect(res).to.have.status(200);
     expect(res.body).to.have.property("id");
     expect(res.body).to.have.property("title");
@@ -61,7 +60,6 @@ describe("GET /todos/:id", () => {
 
   it("Should return a validation error if id is invalid mongo id", async () => {
     const res = await chai.request(expressApp).get("/todos/befji47crhjehr");
-
     expect(res).to.have.status(400);
     expect(res.body)
       .to.have.nested.property("failures[0].message")
@@ -72,12 +70,6 @@ describe("GET /todos/:id", () => {
     const res = await chai
       .request(expressApp)
       .get("/todos/605bb3efc93d78b7f4388c2c");
-
-    expect(res).to.have.status(404);
-  });
-
-  it("should return a 404 if id does not given", async () => {
-    const res = await chai.request(expressApp).get("/todos/");
 
     expect(res).to.have.status(404);
   });

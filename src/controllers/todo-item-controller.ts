@@ -45,9 +45,9 @@ export class TodoItemController extends BaseController {
       );
       return next(valError);
     }
+
     const { id } = req.params;
     const todoItem = await this.appContext.TodoItemRepository.findById(id);
-
     if (todoItem?._id) {
       res.status(200).json(todoItem.serialize());
     }else{
