@@ -9,6 +9,7 @@ import { Application } from "express";
 import { respositoryContext, testAppContext } from "../../mocks/app-context";
 
 import { App } from "@server";
+import { TodoItem } from '@models';
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -43,30 +44,29 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
-  
-  it("should return a validation error if title is not a string", async () => {
-    const res = await chai
-      .request(expressApp)
-      .post("/todos")
-      .send({
-        title: { key: "value" },
-      });
+});
 
+describe("DELETE /todos/:id", () => {
+  it("should return 204 if todo exists and id is valid mongo id", async () => {
+    let todo = await testAppContext.TodoItemRepository.save(
+      new TodoItem({ title: "Todo item delete" })
+    );
+    const res1 = await chai.request(expressApp).delete(`/todos/${todo._id}`);
+    expect(res1).to.have.status(204);
+  });
+
+  it("should return a validation error if id is not a valid mongo ID.", async () => {
+    const res = await chai.request(expressApp).delete("/todos/nkrekl890ielj9re");
     expect(res).to.have.status(400);
     expect(res.body)
       .to.have.nested.property("failures[0].message")
-      .to.equal("Please specify the valid title");
+      .to.equal(
+        "Mongo ID is invalid"
+      );
   });
 
-  describe("DELETE /todos/:id", () => {
-    it("should return 204 if todo exists else 404", async () => {
-      let todo = await testAppContext.todoRepository.save(
-        new TodoItem({ title: "TODO_TO_BE_DELETED" })
-      );
-      const res1 = await chai.request(expressApp).delete(`/todos/${todo._id}`);
-      expect(res1).to.have.status(204);
-  
-      const res2 = await chai.request(expressApp).delete(`/todos/${todo._id}`);
-      expect(res2).to.have.status(404);
-    });
-});
+  it("should return a validation error if todo item does not exists and if id is a valid.", async () => {
+    const res = await chai.request(expressApp).delete("/todos/60d2fe74bd99a211407165e9");
+    expect(res).to.have.status(404);
+  });
+})
