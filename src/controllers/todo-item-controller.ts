@@ -1,17 +1,9 @@
-import { BaseController } from './base-controller';
-import { NextFunction, Response, Router } from 'express';
-import { Validation } from '@helpers';
-import { TodoItem } from '@models';
-import {
-  AppContext,
-  Errors,
-  ExtendedRequest,
-  ValidationFailure,
-} from '@typings';
-import {
-  createTodoItemValidator,
-  fetchTodoItemValidator
-} from '@validators';
+import {BaseController} from './base-controller';
+import {NextFunction, Response, Router} from 'express';
+import {TodoItem, TodoItems} from '@models';
+import {Validation} from '@helpers';
+import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
+import {createTodoItemValidator} from '@validators';
 
 export class TodoItemController extends BaseController {
   public basePath: string = '/todos';
@@ -26,15 +18,22 @@ export class TodoItemController extends BaseController {
     this.router.post(
       `${this.basePath}`,
       createTodoItemValidator(),
-      this.createTodoItem,
+      this.createTodoItem
     );
 
-    this.router.get(
-      `${this.basePath}/:id`,
-      fetchTodoItemValidator(this.appContext),
-      this.fetchTodoItem,
-    );
+    this.router.get(`${this.basePath}`, this.getTodoItemList);
   }
+
+  private getTodoItemList = async (
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const todoItems = new TodoItems(
+      await this.appContext.TodoItemRepository.getAll()
+    );
+    res.status(200).json(todoItems.serialize());
+  };
 
   private fetchTodoItem = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
     const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
@@ -60,25 +59,26 @@ export class TodoItemController extends BaseController {
   private createTodoItem = async (
     req: ExtendedRequest,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     // TODO jjalan: Find a way to do this not in each action
-    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
-    
+    const failures: ValidationFailure[] =
+      Validation.extractValidationErrors(req);
+
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
         res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
-        failures,
+        failures
       );
       return next(valError);
     }
 
-    const { title } = req.body;
+    const {title} = req.body;
     const todoItem = await this.appContext.TodoItemRepository.save(
       new TodoItem({
-        title
-      }),
+        title,
+      })
     );
     res.status(201).json(todoItem.serialize());
-  }
-  }
+  };
+}

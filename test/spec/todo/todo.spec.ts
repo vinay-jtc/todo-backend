@@ -1,15 +1,14 @@
-require("module-alias/register");
+require('module-alias/register');
 
-import chai from "chai";
+import chai from 'chai';
 // tslint:disable-next-line: import-name
-import spies from "chai-spies";
+import spies from 'chai-spies';
 chai.use(spies);
-import chaiHttp from "chai-http";
-import { Application } from "express";
-import { respositoryContext, testAppContext } from "../../mocks/app-context";
+import chaiHttp from 'chai-http';
+import {Application} from 'express';
+import {respositoryContext, testAppContext} from '../../mocks/app-context';
 
-import { App } from "@server";
-import { TodoItem } from "@models";
+import {App} from '@server';
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -24,53 +23,44 @@ before(async () => {
   expressApp = app.expressApp;
 });
 
-describe("POST /todos", () => {
-  it("should create a new todo title", async () => {
-    const res = await chai.request(expressApp).post("/todos").send({
-      title: "Todo title",
+describe('POST /todos', () => {
+  it('should create a new todo title', async () => {
+    const res = await chai.request(expressApp).post('/todos').send({
+      title: 'Todo title',
     });
 
     expect(res).to.have.status(201);
-    expect(res.body).to.have.property("id");
-    expect(res.body).to.have.property("title");
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('title');
   });
 
-  it("should return a validation error if empty title is specified", async () => {
-    const res = await chai.request(expressApp).post("/todos").send({
-      title: "",
+  it('should return a validation error if empty title is specified', async () => {
+    const res = await chai.request(expressApp).post('/todos').send({
+      title: '',
     });
     expect(res).to.have.status(400);
     expect(res.body)
-      .to.have.nested.property("failures[0].message")
-      .to.equal("Please specify the valid title");
+      .to.have.nested.property('failures[0].message')
+      .to.equal('Please specify the valid title');
   });
 });
 
-describe("GET /todos/:id", () => {
-  it("should fetch a todo item if it exists and if id is valid mongo id", async () => {
-    const todoItem = await testAppContext.TodoItemRepository.save(
-      new TodoItem({ title: "Fetching an item" })
-    );
+describe('GET /todos', () => {
+  it('we should fatch all the todo items', async () => {
+    const res = await chai.request(expressApp).get('/todos');
 
-    const res = await chai.request(expressApp).get(`/todos/${todoItem._id}`);
     expect(res).to.have.status(200);
-    expect(res.body).to.have.property("id");
-    expect(res.body).to.have.property("title");
+    expect(res.body).to.be.an('array');
   });
 
-  it("Should return a validation error if id is invalid mongo id", async () => {
-    const res = await chai.request(expressApp).get("/todos/befji47crhjehr");
-    expect(res).to.have.status(400);
-    expect(res.body)
-      .to.have.nested.property("failures[0].message")
-      .to.equal("Mongo ID is invalid");
-  });
+  it('we should check if the array returned is empty when there are no todo items', async () => {
+    await testAppContext.TodoItemRepository.getAll();
 
-  it("should return a 404 if todo item does not exists", async () => {
-    const res = await chai
-      .request(expressApp)
-      .get("/todos/605bb3efc93d78b7f4388c2c");
+    await testAppContext.TodoItemRepository.deleteMany({});
 
-    expect(res).to.have.status(404);
+    const res = await chai.request(expressApp).get('/todos');
+    expect(res).to.have.status(200);
+    expect(res.body).to.be.an('array');
+    expect(res.body).to.deep.equal([]);
   });
 });
