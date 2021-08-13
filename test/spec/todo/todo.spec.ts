@@ -9,6 +9,7 @@ import { Application } from "express";
 import { respositoryContext, testAppContext } from "../../mocks/app-context";
 
 import { App } from "@server";
+import { TodoItem } from "@models";
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -43,13 +44,13 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
-  
+
   it("should return a validation error if title is not a string", async () => {
     const res = await chai
       .request(expressApp)
       .post("/todos")
       .send({
-        title: { key: "value" },
+        title: "kjfekjf",
       });
 
     expect(res).to.have.status(400);
@@ -57,13 +58,14 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
+});
 
-  describe("PUT /todos/:id", () => {
-    it("should return 200 if todo exists and title is validately true and 400 if title is empty or not a string else 404", async () => {
-      let todoItem = await testAppContext.todoItemRepository.save(
-        new TodoItem({ title: "Todo Item Added" })
-      );
-  
+describe("PUT /todos/:id", () => {
+  it("should return 200 if todo exists and title is validately true and 400 if title is empty or not a string else 404", async () => {
+    let todoItem = await testAppContext.TodoItemRepository.save(
+      new TodoItem({ title: "Todo Item Added" })
+    );
+
     if (todoItem._id) {
       const res1 = await chai
         .request(expressApp)
@@ -86,6 +88,17 @@ describe("POST /todos", () => {
         .to.have.nested.property("failures[0].message")
         .to.equal("Please specify the valid title");
 
+      const res4 = await chai
+        .request(expressApp)
+        .put(`/todos/hdjkfffm8efe`)
+        .send({
+          title: "id not valid",
+        });
+      expect(res4).to.have.status(400);
+      expect(res4.body)
+        .to.have.nested.property("failures[0].message")
+        .to.equal("Mongo ID is invalid");
+
       const res3 = await chai
         .request(expressApp)
         .put(`/todos/${todoItem._id}`)
@@ -96,14 +109,14 @@ describe("POST /todos", () => {
       expect(res3.body)
         .to.have.nested.property("failures[0].message")
         .to.equal("Please specify the valid title");
-    } else {
+
       const res5 = await chai
         .request(expressApp)
-        .put(`/todos/${todoItem._id}`)
+        .put(`/todos/"ejhrjhgrgcgje`)
         .send({
           title: "TODO",
         });
       expect(res5).to.have.status(404);
     }
-  })
+  });
 });

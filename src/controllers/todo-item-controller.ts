@@ -1,19 +1,17 @@
-import { BaseController } from './base-controller';
-import { NextFunction, Response, Router } from 'express';
-import { Validation } from '@helpers';
-import { TodoItem } from '@models';
+import { BaseController } from "./base-controller";
+import { NextFunction, Response, Router } from "express";
+import { Validation } from "@helpers";
+import { TodoItem } from "@models";
 import {
   AppContext,
   Errors,
   ExtendedRequest,
   ValidationFailure,
-} from '@typings';
-import {
-  createTodoItemValidator
-} from '@validators';
+} from "@typings";
+import { createTodoItemValidator, updateTodoItemValidator } from "@validators";
 
 export class TodoItemController extends BaseController {
-  public basePath: string = '/todos';
+  public basePath: string = "/todos";
   public router: Router = Router();
 
   constructor(ctx: AppContext) {
@@ -25,52 +23,57 @@ export class TodoItemController extends BaseController {
     this.router.post(
       `${this.basePath}`,
       createTodoItemValidator(),
-      this.createTodoItem,
+      this.createTodoItem
     );
     this.router.put(
       `${this.basePath}/:id`,
       createTodoItemValidator(),
-      this.updateTodoItem,
+      updateTodoItemValidator(this.appContext),
+      this.updateTodoItem
     );
   }
 
   private updateTodoItem = async (
     req: ExtendedRequest,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
-    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
-    
+    const failures: ValidationFailure[] =
+      Validation.extractValidationErrors(req);
+
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
-        res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
-        failures,
+        res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+        failures
       );
       return next(valError);
     }
 
-    const {id} = req.params;
-    const {title} = req.body;
-    const todoItem = await this.appContext.TodoItemRepository.update({_id:id}, {title});
-    if(todoItem){
-      res.status(200).json(todoItem.serialize());
-    }else{
-      res.status(404).send();
+    const { id } = req.params;
+    const { title } = req.body;
+    const todo = await this.appContext.TodoItemRepository.findById(id);
+    if (todo) {
+      return res.status(404).send();
     }
-  }
+    const todoItem = await this.appContext.TodoItemRepository.update({ _id: id },{ title });
+    if (todoItem) {
+      res.status(200).json(todoItem.serialize());
+    }
+  };
 
   private createTodoItem = async (
     req: ExtendedRequest,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     // TODO jjalan: Find a way to do this not in each action
-    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
-    
+    const failures: ValidationFailure[] =
+      Validation.extractValidationErrors(req);
+
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
-        res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
-        failures,
+        res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+        failures
       );
       return next(valError);
     }
@@ -78,9 +81,9 @@ export class TodoItemController extends BaseController {
     const { title } = req.body;
     const todoItem = await this.appContext.TodoItemRepository.save(
       new TodoItem({
-        title
-      }),
+        title,
+      })
     );
     res.status(201).json(todoItem.serialize());
-  }
-  }
+  };
+}

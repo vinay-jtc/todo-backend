@@ -1,2 +1,4 @@
 import createTodoItemValidator from './create-todo-item-validator';
-export { createTodoItemValidator };
+import updateTodoItemValidator from './update-todo-item-validator';
+
+export { createTodoItemValidator, updateTodoItemValidator };
