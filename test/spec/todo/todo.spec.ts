@@ -9,7 +9,8 @@ import { Application } from "express";
 import { respositoryContext, testAppContext } from "../../mocks/app-context";
 
 import { App } from "@server";
-import { TodoItem } from '@models';
+import { TodoItem } from "@models";
+
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -45,6 +46,7 @@ describe("POST /todos", () => {
       .to.equal("Please specify the valid title");
   });
 });
+
 
 describe("DELETE /todos/:id", () => {
   it("should return 204 if todo exists and id is valid mongo id", async () => {

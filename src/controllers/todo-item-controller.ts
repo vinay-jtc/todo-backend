@@ -30,6 +30,12 @@ export class TodoItemController extends BaseController {
       deleteTodoItemValidator(this.appContext),
       this.deleteTodoItem
     );
+
+    this.router.get(
+      `${this.basePath}/:id`,
+      fetchTodoItemValidator(this.appContext),
+      this.fetchTodoItem,
+    );
   }
 
   private deleteTodoItem = async (
