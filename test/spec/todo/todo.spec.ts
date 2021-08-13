@@ -92,6 +92,3 @@ describe("PUT /todos/:id", () => {
       .request(expressApp)
       .get("/todos/605bb3efc93d78b7f4388c2c");
 
-    expect(res).to.have.status(404);
-  });
-});

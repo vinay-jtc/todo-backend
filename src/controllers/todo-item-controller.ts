@@ -31,6 +31,12 @@ export class TodoItemController extends BaseController {
       updateTodoItemValidator(this.appContext),
       this.updateTodoItem
     );
+
+    this.router.get(
+      `${this.basePath}/:id`,
+      fetchTodoItemValidator(this.appContext),
+      this.fetchTodoItem,
+    );
   }
 
   private updateTodoItem = async (
