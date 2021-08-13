@@ -7,7 +7,8 @@
     "VALIDATION_FAILED": "Validation failed. Please modify the request and try again."
   },
   "VALIDATION_ERRORS": {
-    "INVALID_TITLE": "Please specify the valid title"
+    "INVALID_TITLE": "Please specify the valid title",
+    "INVALID_ID": "Mongo ID is invalid"
   },
   "MESSAGES": {
     "HEALTHCHECK": "OK"
