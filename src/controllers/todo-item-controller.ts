@@ -1,14 +1,10 @@
-import { BaseController } from "./base-controller";
-import { NextFunction, Response, Router } from "express";
-import { Validation } from "@helpers";
-import { TodoItem } from "@models";
-import {
-  AppContext,
-  Errors,
-  ExtendedRequest,
-  ValidationFailure,
-} from "@typings";
-import { createTodoItemValidator, updateTodoItemValidator } from "@validators";
+import {BaseController} from './base-controller';
+import {NextFunction, Response, Router} from 'express';
+import {TodoItem, TodoItems} from '@models';
+import {Validation} from '@helpers';
+import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
+import {createTodoItemValidator} from '@validators';
+
 
 export class TodoItemController extends BaseController {
   public basePath: string = "/todos";
@@ -32,13 +28,8 @@ export class TodoItemController extends BaseController {
       this.updateTodoItem
     );
 
-    this.router.get(
-      `${this.basePath}/:id`,
-      fetchTodoItemValidator(this.appContext),
-      this.fetchTodoItem,
-    );
+    this.router.get(`${this.basePath}`, this.getTodoItemList);
   }
-
   private updateTodoItem = async (
     req: ExtendedRequest,
     res: Response,
@@ -83,7 +74,7 @@ export class TodoItemController extends BaseController {
       return next(valError);
     }
 
-    const { title } = req.body;
+    const {title} = req.body;
     const todoItem = await this.appContext.TodoItemRepository.save(
       new TodoItem({
         title,
