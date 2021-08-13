@@ -9,6 +9,7 @@ import { Application } from "express";
 import { respositoryContext, testAppContext } from "../../mocks/app-context";
 
 import { App } from "@server";
+import { TodoItem } from "@models";
 
 chai.use(chaiHttp);
 const expect = chai.expect;
