@@ -43,43 +43,26 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
-  
-  it("should return a validation error if title is not a string", async () => {
-    const res = await chai
-      .request(expressApp)
-      .post("/todos")
-      .send({
-        title: { key: "value" },
-      });
+});
 
-    expect(res).to.have.status(400);
-    expect(res.body)
-      .to.have.nested.property("failures[0].message")
-      .to.equal("Please specify the valid title");
+describe("GET /todos", () => {
+  it("we should fatch all the todo items", async () => {
+    const res = await chai.request(expressApp).get("/todos");
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.be.an("array");
   });
 
-  describe("GET /todos", () => {
-    it("we should fatch all the todo items", async () => {
-      const res = await chai.request(expressApp).get("/todos");
-  
-      expect(res).to.have.status(200);
-      expect(res.body).to.be.an("array");
-    });
+  it("we should check if the array returned is empty when there are no todo items", async () => {
+    await testAppContext.TodoItemRepository.getAll();
 
-    it("we should check if the array returned is empty when there are no todo items", async () => {
-      await testAppContext.todoItemRepository.getAll();
-  
-      await testAppContext.todoItemRepository.deleteMany({});
-  
-      const res = await chai.request(expressApp).get("/todos");
-  
-      expect(res).to.have.status(200);
-      expect(res.body).to.be.an("array");
-      expect(res.body).to.deep.equal([]);
-    });
+    await testAppContext.TodoItemRepository.deleteMany({});
 
+    const res = await chai.request(expressApp).get("/todos");
+    expect(res).to.have.status(200);
+    expect(res.body).to.be.an("array");
+    expect(res.body).to.deep.equal([]);
   });
-
-
 
 });
+
