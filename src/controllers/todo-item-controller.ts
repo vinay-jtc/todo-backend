@@ -48,9 +48,7 @@ export class TodoItemController extends BaseController {
     }
 
     const { id } = req.params;
-    const todoItem = await this.appContext.TodoItemRepository.deleteMany({
-      _id: id,
-    });
+    const todoItem = await this.appContext.TodoItemRepository.deleteMany({_id: id,});
     if (todoItem) {
       res.status(204).send();
     } else {
