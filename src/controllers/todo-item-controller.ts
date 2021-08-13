@@ -9,7 +9,8 @@ import {
   ValidationFailure,
 } from '@typings';
 import {
-  createTodoItemValidator
+  createTodoItemValidator,
+  fetchTodoItemValidator
 } from '@validators';
 
 export class TodoItemController extends BaseController {
@@ -27,8 +28,35 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem,
     );
+
+    this.router.get(
+      `${this.basePath}/:id`,
+      fetchTodoItemValidator(this.appContext),
+      this.fetchTodoItem,
+    );
   }
 
+  private fetchTodoItem = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
+    if (failures.length > 0) {
+      const valError = new Errors.ValidationError(
+        res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+        failures
+      );
+      return next(valError);
+    }
+
+    const { id } = req.params;
+    const todoItem = await this.appContext.TodoItemRepository.findById(id);
+    if (todoItem?._id) {
+      res.status(200).json(todoItem.serialize());
+    }else{
+      const valError = new Errors.NotFoundError(res.__('DEFAULT_ERRORS.RESOURCE_NOT_FOUND'));
+      return next(valError);
+    }
+  };
+
+  
   private createTodoItem = async (
     req: ExtendedRequest,
     res: Response,
