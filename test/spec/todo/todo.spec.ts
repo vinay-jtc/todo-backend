@@ -34,6 +34,16 @@ describe("POST /todos", () => {
     expect(res.body).to.have.property("id");
     expect(res.body).to.have.property("title");
   });
+
+  it("should return a validation error if empty title is specified", async () => {
+    const res = await chai.request(expressApp).post("/todos").send({
+      title: "",
+    });
+    expect(res).to.have.status(400);
+    expect(res.body)
+      .to.have.nested.property("failures[0].message")
+      .to.equal("Please specify the valid title");
+  });
 });
 
 describe("GET /todos/:id", () => {
