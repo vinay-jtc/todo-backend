@@ -44,20 +44,6 @@ describe("POST /todos", () => {
       .to.have.nested.property("failures[0].message")
       .to.equal("Please specify the valid title");
   });
-
-  it("should return a validation error if title is not a string", async () => {
-    const res = await chai
-      .request(expressApp)
-      .post("/todos")
-      .send({
-        title: "kjfekjf",
-      });
-
-    expect(res).to.have.status(400);
-    expect(res.body)
-      .to.have.nested.property("failures[0].message")
-      .to.equal("Please specify the valid title");
-  });
 });
 
 describe("PUT /todos/:id", () => {
@@ -98,25 +84,14 @@ describe("PUT /todos/:id", () => {
       expect(res4.body)
         .to.have.nested.property("failures[0].message")
         .to.equal("Mongo ID is invalid");
-
-      const res3 = await chai
-        .request(expressApp)
-        .put(`/todos/${todoItem._id}`)
-        .send({
-          title: { key: "value" },
-        });
-      expect(res3).to.have.status(400);
-      expect(res3.body)
-        .to.have.nested.property("failures[0].message")
-        .to.equal("Please specify the valid title");
-
-      const res5 = await chai
-        .request(expressApp)
-        .put(`/todos/"ejhrjhgrgcgje`)
-        .send({
-          title: "TODO",
-        });
-      expect(res5).to.have.status(404);
     }
+  });
+
+  it("should return a 404 if todo item does not exists", async () => {
+    const res = await chai
+      .request(expressApp)
+      .get("/todos/605bb3efc93d78b7f4388c2c");
+
+    expect(res).to.have.status(404);
   });
 });

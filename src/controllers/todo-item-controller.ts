@@ -51,13 +51,12 @@ export class TodoItemController extends BaseController {
 
     const { id } = req.params;
     const { title } = req.body;
-    const todo = await this.appContext.TodoItemRepository.findById(id);
-    if (todo) {
-      return res.status(404).send();
-    }
     const todoItem = await this.appContext.TodoItemRepository.update({ _id: id },{ title });
-    if (todoItem) {
+    if (todoItem?._id) {
       res.status(200).json(todoItem.serialize());
+    }else{
+      const valError = new Errors.NotFoundError(res.__('DEFAULT_ERRORS.RESOURCE_NOT_FOUND'));
+      return next(valError);
     }
   };
 
