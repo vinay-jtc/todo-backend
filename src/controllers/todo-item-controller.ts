@@ -1,17 +1,12 @@
-import { BaseController } from "./base-controller";
-import { NextFunction, Response, Router } from "express";
-import { Validation } from "@helpers";
-import { TodoItem } from "@models";
-import {
-  AppContext,
-  Errors,
-  ExtendedRequest,
-  ValidationFailure,
-} from "@typings";
-import { createTodoItemValidator, deleteTodoItemValidator } from "@validators";
+import {BaseController} from './base-controller';
+import {NextFunction, Response, Router} from 'express';
+import {Validation} from '@helpers';
+import {TodoItem} from '@models';
+import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
+import {createTodoItemValidator, deleteTodoItemValidator} from '@validators';
 
 export class TodoItemController extends BaseController {
-  public basePath: string = "/todos";
+  public basePath: string = '/todos';
   public router: Router = Router();
 
   constructor(ctx: AppContext) {
@@ -41,18 +36,24 @@ export class TodoItemController extends BaseController {
       Validation.extractValidationErrors(req);
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
-        res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+        res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
         failures
       );
       return next(valError);
     }
 
-    const { id } = req.params;
-    const todoItem = await this.appContext.TodoItemRepository.deleteMany({_id: id,});
-    if (todoItem) {
-      res.status(204).send();
+    const {id} = req.params;
+    const todoItem = await this.appContext.TodoItemRepository.update(
+      {_id: id},
+      {isActive: false}
+    );
+    if (todoItem?._id) {
+      res.status(204).json(todoItem.serialize());
     } else {
-      res.status(404).send();
+      const valError = new Errors.NotFoundError(
+        res.__('DEFAULT_ERRORS.RESOURCE_NOT_FOUND')
+      );
+      return next(valError);
     }
   };
 
@@ -67,13 +68,13 @@ export class TodoItemController extends BaseController {
 
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
-        res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+        res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
         failures
       );
       return next(valError);
     }
 
-    const { title } = req.body;
+    const {title} = req.body;
     const todoItem = await this.appContext.TodoItemRepository.save(
       new TodoItem({
         title,

@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import {model, Schema} from 'mongoose';
 
 const todoItemSchema: Schema = new Schema(
   {
@@ -6,14 +6,18 @@ const todoItemSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
-    collection: "todos",
+    collection: 'todos',
     timestamps: {
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
+      createdAt: 'createdAt',
+      updatedAt: 'updatedAt',
     },
   }
 );
-const todoItem = model("TodoItem", todoItemSchema);
+const todoItem = model('TodoItem', todoItemSchema);
 export default todoItem;
