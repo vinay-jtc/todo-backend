@@ -48,7 +48,7 @@ describe('POST /todos', () => {
 
 describe('PUT /todos/:id', () => {
   it('should return 200 if todo exists & id is valid mongo id & title is not empty', async () => {
-    let todoItem = await testAppContext.TodoItemRepository.save(
+    const todoItem = await testAppContext.TodoItemRepository.save(
       new TodoItem({title: 'Todo Item Added'})
     );
     const res = await chai
@@ -63,7 +63,7 @@ describe('PUT /todos/:id', () => {
   })
 
   it('should return 400 if todo exists & id is valid mongo id & title is empty', async () => {
-    let todoItem = await testAppContext.TodoItemRepository.save(
+    const todoItem = await testAppContext.TodoItemRepository.save(
       new TodoItem({title: 'Todo Item Added'})
     );
     const res = await chai
@@ -78,14 +78,14 @@ describe('PUT /todos/:id', () => {
       .to.equal('Please specify the valid title');
   })
 
-  it('should return 400 if id is valid mongo id', async () => {
+  it('should return 400 if id is invalid mongo id', async () => {
     const res = await chai
       .request(expressApp)
       .put(`/todos/hdjkfffm8efe`)
       .send({
         title: 'id not valid',
       });
-    expect(res).to.have.status(400);
+    expect(res).to.have.status(400);dd
     expect(res.body)
       .to.have.nested.property('failures[0].message')
       .to.equal('Mongo ID is invalid');
