@@ -1,9 +1,10 @@
 import {BaseController} from './base-controller';
 import {NextFunction, Response, Router} from 'express';
+import {TodoItem} from '@models';
 import {Validation} from '@helpers';
 import {TodoItem} from '@models';
 import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
-import {createTodoItemValidator, deleteTodoItemValidator} from '@validators';
+import {createTodoItemValidator, updateTodoItemValidator} from '@validators';
 
 export class TodoItemController extends BaseController {
   public basePath: string = '/todos';
@@ -28,6 +29,7 @@ export class TodoItemController extends BaseController {
   }
 
   private deleteTodoItem = async (
+
     req: ExtendedRequest,
     res: Response,
     next: NextFunction
