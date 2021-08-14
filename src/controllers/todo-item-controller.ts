@@ -1,9 +1,9 @@
 import {BaseController} from './base-controller';
 import {NextFunction, Response, Router} from 'express';
-import {TodoItem, TodoItems} from '@models';
+import {TodoItem} from '@models';
 import {Validation} from '@helpers';
 import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
-import {createTodoItemValidator} from '@validators';
+import {createTodoItemValidator, updateTodoItemValidator} from '@validators';
 
 export class TodoItemController extends BaseController {
   public basePath: string = '/todos';
@@ -20,42 +20,44 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem
     );
-
-    this.router.get(`${this.basePath}`, this.getTodoItemList);
+    this.router.put(
+      `${this.basePath}/:id`,
+      updateTodoItemValidator(this.appContext),
+      this.updateTodoItem
+    );
   }
-
-  private getTodoItemList = async (
+  private updateTodoItem = async (
     req: ExtendedRequest,
     res: Response,
     next: NextFunction
   ) => {
-    const todoItems = new TodoItems(
-      await this.appContext.TodoItemRepository.getAll()
-    );
-    res.status(200).json(todoItems.serialize());
-  };
+    const failures: ValidationFailure[] =
+      Validation.extractValidationErrors(req);
 
-  private fetchTodoItem = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    const failures: ValidationFailure[] = Validation.extractValidationErrors(req);
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
-        res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+        res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
         failures
       );
       return next(valError);
     }
 
-    const { id } = req.params;
-    const todoItem = await this.appContext.TodoItemRepository.findById(id);
+    const {id} = req.params;
+    const {title} = req.body;
+    const todoItem = await this.appContext.TodoItemRepository.update(
+      {_id: id},
+      {title}
+    );
     if (todoItem?._id) {
       res.status(200).json(todoItem.serialize());
-    }else{
-      const valError = new Errors.NotFoundError(res.__('DEFAULT_ERRORS.RESOURCE_NOT_FOUND'));
+    } else {
+      const valError = new Errors.NotFoundError(
+        res.__('DEFAULT_ERRORS.RESOURCE_NOT_FOUND')
+      );
       return next(valError);
     }
   };
 
-  
   private createTodoItem = async (
     req: ExtendedRequest,
     res: Response,
