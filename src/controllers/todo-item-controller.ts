@@ -2,9 +2,8 @@ import {BaseController} from './base-controller';
 import {NextFunction, Response, Router} from 'express';
 import {TodoItem} from '@models';
 import {Validation} from '@helpers';
-import {TodoItem} from '@models';
 import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
-import {createTodoItemValidator, updateTodoItemValidator} from '@validators';
+import {createTodoItemValidator, deleteTodoItemValidator} from '@validators';
 
 export class TodoItemController extends BaseController {
   public basePath: string = '/todos';
