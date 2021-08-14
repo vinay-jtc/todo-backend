@@ -10,6 +10,7 @@ import {
 } from "@typings";
 import { createTodoItemValidator, deleteTodoItemValidator } from "@validators";
 
+
 export class TodoItemController extends BaseController {
   public basePath: string = "/todos";
   public router: Router = Router();
@@ -29,15 +30,10 @@ export class TodoItemController extends BaseController {
       `${this.basePath}/:id`,
       deleteTodoItemValidator(this.appContext),
       this.deleteTodoItem
-    );
 
-    this.router.get(
-      `${this.basePath}/:id`,
-      fetchTodoItemValidator(this.appContext),
-      this.fetchTodoItem,
     );
   }
-
+  
   private deleteTodoItem = async (
     req: ExtendedRequest,
     res: Response,
@@ -74,12 +70,13 @@ export class TodoItemController extends BaseController {
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
         res.__("DEFAULT_ERRORS.VALIDATION_FAILED"),
+
         failures
       );
       return next(valError);
     }
 
-    const { title } = req.body;
+    const {title} = req.body;
     const todoItem = await this.appContext.TodoItemRepository.save(
       new TodoItem({
         title,
