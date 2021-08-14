@@ -3,7 +3,7 @@ import {NextFunction, Response, Router} from 'express';
 import {TodoItem} from '@models';
 import {Validation} from '@helpers';
 import {AppContext, Errors, ExtendedRequest, ValidationFailure} from '@typings';
-import {createTodoItemValidator, updateTodoItemValidator} from '@validators';
+import {createTodoItemValidator, deleteTodoItemValidator} from '@validators';
 
 export class TodoItemController extends BaseController {
   public basePath: string = '/todos';
@@ -20,20 +20,21 @@ export class TodoItemController extends BaseController {
       createTodoItemValidator(),
       this.createTodoItem
     );
-    this.router.put(
+    this.router.delete(
       `${this.basePath}/:id`,
-      updateTodoItemValidator(this.appContext),
-      this.updateTodoItem
+      deleteTodoItemValidator(this.appContext),
+      this.deleteTodoItem
     );
   }
-  private updateTodoItem = async (
+
+  private deleteTodoItem = async (
+
     req: ExtendedRequest,
     res: Response,
     next: NextFunction
   ) => {
     const failures: ValidationFailure[] =
       Validation.extractValidationErrors(req);
-
     if (failures.length > 0) {
       const valError = new Errors.ValidationError(
         res.__('DEFAULT_ERRORS.VALIDATION_FAILED'),
@@ -43,13 +44,12 @@ export class TodoItemController extends BaseController {
     }
 
     const {id} = req.params;
-    const {title} = req.body;
     const todoItem = await this.appContext.TodoItemRepository.update(
       {_id: id},
-      {title}
+      {isActive: false}
     );
     if (todoItem?._id) {
-      res.status(200).json(todoItem.serialize());
+      res.status(204).json(todoItem.serialize());
     } else {
       const valError = new Errors.NotFoundError(
         res.__('DEFAULT_ERRORS.RESOURCE_NOT_FOUND')

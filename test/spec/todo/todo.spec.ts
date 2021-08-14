@@ -9,7 +9,8 @@ import {Application} from 'express';
 import {respositoryContext, testAppContext} from '../../mocks/app-context';
 
 import {App} from '@server';
-import {TodoItem} from '@models';
+import {TodoItem} from "@models"
+
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -46,58 +47,34 @@ describe('POST /todos', () => {
   });
 });
 
-describe('PUT /todos/:id', () => {
-  it('should return 200 if todo exists & id is valid mongo id & title is not empty', async () => {
-    const todoItem = await testAppContext.TodoItemRepository.save(
-      new TodoItem({title: 'Todo Item Added'})
-    );
-    const res = await chai
-      .request(expressApp)
-      .put(`/todos/${todoItem._id}`)
-      .send({
-        title: 'To update',
-      });
-    expect(res).to.have.status(200);
-    expect(res.body).to.have.property('id');
-    expect(res.body).to.have.property('title');
-  })
 
-  it('should return 400 if todo exists & id is valid mongo id & title is empty', async () => {
-    const todoItem = await testAppContext.TodoItemRepository.save(
-      new TodoItem({title: 'Todo Item Added'})
+
+describe("DELETE /todos/:id", () => {
+  it("should return 204 if todo exists and id is valid mongo id", async () => {
+    const todo = await testAppContext.TodoItemRepository.save(
+      new TodoItem({ title: "Todo item delete" })
     );
-    const res = await chai
-      .request(expressApp)
-      .put(`/todos/${todoItem._id}`)
-      .send({
-        title: '',
-      });
+    const res1 = await chai.request(expressApp).delete(`/todos/${todo._id}`);
+    expect(res1).to.have.status(204);
+  });
+
+  it("should return a validation error if id is not a valid mongo ID.", async () => {
+    const res = await chai.request(expressApp).delete("/todos/nkrekl890ielj9re");
     expect(res).to.have.status(400);
     expect(res.body)
-      .to.have.nested.property('failures[0].message')
-      .to.equal('Please specify the valid title');
-  })
-
-  it('should return 400 if id is invalid mongo id', async () => {
-    const res = await chai
-      .request(expressApp)
-      .put(`/todos/hdjkfffm8efe`)
-      .send({
-        title: 'id not valid',
-      });
-    expect(res).to.have.status(400);dd
-    expect(res.body)
-      .to.have.nested.property('failures[0].message')
-      .to.equal('Mongo ID is invalid');
+      .to.have.nested.property("failures[0].message")
+      .to.equal(
+        "Mongo ID is invalid"
+      );
   });
 
   it('should return 404 if todo item not found', async () => {
     const res = await chai
       .request(expressApp)
-      .put(`/todos/60e6a930d1df5518e185ba05`)
-      .send({
-        title: 'id not valid',
-      });
+      .delete(`/todos/60e6a930d1df5518e185ba05`)
+
     expect(res).to.have.status(404);
   });
-});
+
+})
+
